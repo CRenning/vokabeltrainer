@@ -1,0 +1,11 @@
+{
+  "name": "mot-a-mot-vokabeltrainer",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "@netlify/blobs": "^9.1.1",
+    "@netlify/functions": "^4.2.2",
+    "@netlify/identity": "^1.0.0"
+  }
+}

@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#153d35" />
+    <title>Mot à mot · Vokabeltrainer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="#home" data-view="home" aria-label="Zur Startseite">
+        <span class="brand-mark">m</span>
+        <span>mot à mot</span>
+      </a>
+      <nav aria-label="Hauptnavigation">
+        <button class="nav-link active" data-view="home">Übersicht</button>
+        <button class="nav-link" data-view="add">Vokabeln</button>
+        <button class="nav-link" data-view="learn">Lernen</button>
+      </nav>
+      <div class="vocab-count"><span id="totalCount">0</span> Vokabeln</div>
+    </header>
+
+    <main>
+      <section class="view active" id="home">
+        <div class="home-hero">
+          <div class="eyebrow">Französisch · Deutsch</div>
+          <h1>Ein Wort nach<br /><em>dem anderen.</em></h1>
+          <p class="intro">Dein persönlicher Vokabeltrainer für die Unités 1 bis 5. Sammle Wörter und rufe sie dann genau dann ab, wenn sie sitzen sollen.</p>
+          <div class="hero-actions">
+            <button class="button primary" data-view="add">Vokabel einpflegen <span>→</span></button>
+            <button class="button secondary" data-view="learn">Jetzt lernen <span>↗</span></button>
+          </div>
+        </div>
+        <div class="unit-overview">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">Dein Bestand</span>
+              <h2>Unité-Übersicht</h2>
+            </div>
+            <button class="text-button" data-view="add">+ Wort hinzufügen</button>
+          </div>
+          <div class="unit-grid" id="unitOverview"></div>
+        </div>
+      </section>
+
+      <section class="view" id="add">
+        <div class="page-heading">
+          <div class="eyebrow">Sammlung erweitern</div>
+          <h1>Neue Vokabel <em>notieren.</em></h1>
+          <p>Speichere ein Wort samt Übersetzung und allem, was du dir dazu merken möchtest.</p>
+        </div>
+        <div class="add-layout">
+          <form class="vocab-form" id="vocabForm">
+            <div class="form-intro"><span class="number">01</span><span>Wort erfassen</span></div>
+            <label for="unit">Schwierigkeit / Unité</label>
+            <div class="select-wrap">
+              <select id="unit" required>
+                <option value="1">Unité 1 · Einstieg</option>
+                <option value="2">Unité 2</option>
+                <option value="3">Unité 3</option>
+                <option value="4">Unité 4</option>
+                <option value="5">Unité 5 · Fortgeschritten</option>
+              </select>
+            </div>
+            <div class="word-fields">
+              <div>
+                <label for="french">Französisch</label>
+                <input id="french" autocomplete="off" placeholder="z. B. le livre" required />
+              </div>
+              <span class="swap" aria-hidden="true">⇄</span>
+              <div>
+                <label for="german">Deutsch</label>
+                <input id="german" autocomplete="off" placeholder="z. B. das Buch" required />
+              </div>
+            </div>
+            <label for="notes">Notiz <span>optional</span></label>
+            <textarea id="notes" rows="4" placeholder="z. B. Plural: les livres"></textarea>
+            <button class="button primary submit" type="submit">Vokabel speichern <span>→</span></button>
+          </form>
+          <aside class="tip-card">
+            <span class="tip-symbol">✦</span>
+            <h3>Kleiner Lerntipp</h3>
+            <p>Schreibe Artikel direkt mit auf. <em>le livre</em> bleibt besser hängen als nur <em>livre</em>.</p>
+          </aside>
+        </div>
+        <div class="saved-section">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">Gespeichert</span>
+              <h2>Deine Vokabeln</h2>
+            </div>
+            <div class="filter-pills" id="listFilters" aria-label="Nach Unité filtern"></div>
+          </div>
+          <div id="vocabList" class="vocab-list"></div>
+        </div>
+      </section>
+
+      <section class="view" id="learn">
+        <div class="learn-heading">
+          <div>
+            <div class="eyebrow">Abfrage</div>
+            <h1>Mach’s <em>ohne Spickzettel.</em></h1>
+          </div>
+          <div class="learn-controls">
+            <label for="learnUnit">Unité</label>
+            <div class="select-wrap small"><select id="learnUnit"><option value="all">Alle Unités</option><option value="1">Unité 1</option><option value="2">Unité 2</option><option value="3">Unité 3</option><option value="4">Unité 4</option><option value="5">Unité 5</option></select></div>
+            <label for="direction">Richtung</label>
+            <div class="select-wrap small"><select id="direction"><option value="mixed">Gemischt</option><option value="fr-de">Französisch → Deutsch</option><option value="de-fr">Deutsch → Französisch</option></select></div>
+          </div>
+        </div>
+        <div class="learn-stage" id="learnStage">
+          <div class="empty-learn">
+            <span class="empty-icon">☼</span>
+            <h2>Bereit für dein erstes Wort?</h2>
+            <p>Füge zuerst ein paar Vokabeln hinzu. Danach kannst du sie hier abfragen lassen.</p>
+            <button class="button primary" data-view="add">Vokabeln einpflegen <span>→</span></button>
+          </div>
+        </div>
+        <div class="session-bar" id="sessionBar" hidden>
+          <span id="sessionStatus">0 beantwortet</span>
+          <div class="progress"><div id="progressFill"></div></div>
+          <span id="sessionCorrect">0 richtig</span>
+        </div>
+      </section>
+    </main>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <div class="modal-backdrop" id="authModal" hidden>
+      <form class="auth-modal" id="authForm">
+        <button class="modal-close" id="closeAuth" type="button" aria-label="Schließen">×</button>
+        <span class="tip-symbol">✦</span>
+        <span class="eyebrow">Geschützter Bereich</span>
+        <h2>Wörter verwalten</h2>
+        <p>Melde dich mit deinem Admin-Konto an, um neue Vokabeln zu speichern oder bestehende zu löschen.</p>
+        <label for="adminEmail">E-Mail-Adresse</label>
+        <input id="adminEmail" type="email" autocomplete="email" required />
+        <label for="adminPassword">Passwort</label>
+        <input id="adminPassword" type="password" autocomplete="current-password" required />
+        <p class="auth-error" id="authError" hidden></p>
+        <button class="button primary" type="submit">Freischalten <span>→</span></button>
+      </form>
+    </div>
+    <template id="unitCardTemplate">
+      <button class="unit-card" data-view="learn">
+        <span class="unit-label"></span><span class="unit-count"></span>
+        <div class="unit-line"><i></i></div>
+        <span class="unit-link">Üben <b>→</b></span>
+      </button>
+    </template>
+    <script type="module" src="app.js"></script>
+  </body>
+</html>

@@ -1,4 +1,4 @@
-import { getUser, handleAuthCallback, login } from 'https://esm.sh/@netlify/identity';
+
 
 const LOCAL_STORAGE_KEY = 'mot-a-mot-vocabulary-v1';
 const seedWords = [

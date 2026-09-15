@@ -3,8 +3,11 @@ import { getStore } from "@netlify/blobs";
 
 export default async (req: Request, context: Context) => {
   const store = getStore("vocabulary");
-  const user = context.clientContext?.user;
-  const isAdmin = user?.app_metadata?.roles?.includes("admin");
+  
+  // Hier werden Benutzername und Passwort direkt abgeglichen
+  const user = req.headers.get("x-user");
+  const pass = req.headers.get("x-pass");
+  const isAdmin = (user === "TimCook" && pass === "Tessi");
 
   if (req.method === "GET") {
     const data = (await store.get("words", { type: "json" })) || [];
@@ -13,7 +16,8 @@ export default async (req: Request, context: Context) => {
     });
   }
 
-  if (!user || !isAdmin) {
+  // Wenn man was speichern oder löschen will, aber die Daten falsch sind:
+  if (!isAdmin) {
     return new Response(JSON.stringify({ error: "Nicht autorisiert" }), { status: 401 });
   }
 

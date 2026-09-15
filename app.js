@@ -114,29 +114,40 @@ function requestAdmin(action) {
 function closeAuth() { $('#authModal').hidden = true; pendingAction = null; }
 async function submitWord(word) {
   try {
-    if (remoteMode) words = (await api('/api/words', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(word) })).words;
+    if (remoteMode) words = (await api('/api/words', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-user': admin.user, 'x-pass': admin.pass }, body: JSON.stringify(word) })).words;
     else { words.unshift({ ...word, id: String(Date.now()) }); saveLocal(); }
     $('#vocabForm').reset(); $('#unit').value = '1'; renderEverything(); showToast(`„${word.french}“ ist gespeichert.`);
-  } catch (error) { if (error.status === 401) { admin = null; showToast('Bitte melde dich erneut als Admin an.'); } else showToast(error.message); }
+  } catch (error) { if (error.status === 401) { admin = null; showToast('Falsche Zugangsdaten. Bitte erneut anmelden.'); } else showToast(error.message); }
 }
 async function deleteWord(word) {
   try {
-    if (remoteMode) words = (await api('/api/words', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: word.id }) })).words;
+    if (remoteMode) words = (await api('/api/words', { method: 'DELETE', headers: { 'Content-Type': 'application/json', 'x-user': admin.user, 'x-pass': admin.pass }, body: JSON.stringify({ id: word.id }) })).words;
     else { words = words.filter(item => item.id !== word.id); saveLocal(); }
     renderEverything(); showToast(`„${word.french}“ wurde gelöscht.`);
-  } catch (error) { if (error.status === 401) { admin = null; showToast('Bitte melde dich erneut als Admin an.'); } else showToast(error.message); }
+  } catch (error) { if (error.status === 401) { admin = null; showToast('Falsche Zugangsdaten. Bitte erneut anmelden.'); } else showToast(error.message); }
 }
 
 $('#vocabForm').addEventListener('submit', event => { event.preventDefault(); const word = { unit: Number($('#unit').value), french: $('#french').value.trim(), german: $('#german').value.trim(), notes: $('#notes').value.trim() }; if (word.french && word.german) requestAdmin(() => submitWord(word)); });
-$('#authForm').addEventListener('submit', async event => {
-  event.preventDefault(); const button = $('#authForm button[type="submit"]'); button.disabled = true;
-  try { admin = await login($('#adminEmail').value.trim(), $('#adminPassword').value); const action = pendingAction; closeAuth(); action?.(); }
-  catch (error) { $('#authError').textContent = error.message || 'Anmeldung fehlgeschlagen.'; $('#authError').hidden = false; }
-  finally { button.disabled = false; }
+
+$('#authForm').addEventListener('submit', event => {
+  event.preventDefault(); 
+  const u = $('#adminEmail').value.trim();
+  const p = $('#adminPassword').value;
+  if (u === 'TimCook' && p === 'Tessi') {
+    admin = { user: u, pass: p };
+    const action = pendingAction; 
+    closeAuth(); 
+    action?.();
+  } else {
+    $('#authError').textContent = 'Falscher Benutzername oder Passwort.'; 
+    $('#authError').hidden = false;
+  }
 });
+
 $('#closeAuth').addEventListener('click', closeAuth);
 $('#authModal').addEventListener('click', event => { if (event.target === $('#authModal')) closeAuth(); });
 $$('[data-view]').forEach(element => element.addEventListener('click', event => { event.preventDefault(); switchView(element.dataset.view); }));
 $('#learnUnit').addEventListener('change', renderLearn); $('#direction').addEventListener('change', renderLearn);
-async function initializeAuth() { await handleAuthCallback(); admin = await getUser(); }
+
+async function initializeAuth() { admin = null; }
 renderEverything(); initializeAuth().finally(loadWords);
